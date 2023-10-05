@@ -39,8 +39,7 @@ For now, though:
 
 ------------------------------------------
 
-Georgii Skorokhod and Hannah Zheng, 2023
-
-University of St Andrews
-
-Developed as part of a Vertically Integrated Project by Ozgur Akgun et al (see [main repos](https://github.com/conjure-cp))
+- Georgii Skorokhod and Hannah Zheng, 2023
+- University of St Andrews
+- Developed as part of a Vertically Integrated Project by Ozgur Akgun et al
+- (See [main repos](https://github.com/conjure-cp))
