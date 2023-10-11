@@ -9,10 +9,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
-
-    env:
-      ESSENCE_DIR: "${GITHUB_WORKSPACE}/EssenceCatalog"
-      CONJURE_DIR: "${GITHUB_WORKSPACE}/conjure-v2.5.0-linux"
  
     steps:
       - name: Checkout code
@@ -25,6 +21,10 @@ jobs:
 
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
+
+      - name: Set env vars
+        run: echo "CONJURE_DIR=${GITHUB_WORKSPACE}/conjure-v2.5.0-linux" >> "$GITHUB_ENV" &&
+             echo "ESSENCE_DIR=${GITHUB_WORKSPACE}/EssenceCatalog" >> "$GITHUB_ENV"
 
       - name: Download conjure binary as zip file from Releases
         run: wget https://github.com/conjure-cp/conjure/releases/download/v2.5.0/conjure-v2.5.0-linux.zip
