@@ -1,5 +1,9 @@
 import os
-from collections.abc import Iterable
+
+
+def count_lines(fpath):
+    with open(fpath, "rbU") as f:
+        return sum(1 for _ in f)
 
 
 def trim_path(input_path, num_elements=0):
@@ -16,11 +20,3 @@ def trim_path(input_path, num_elements=0):
     trimmed_path = os.path.sep.join(path_elements[-num_elements:])
 
     return trimmed_path
-
-
-def map_range(x, in_min, in_max, out_min, out_max):
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-
-
-def clamp(x, minn, maxn):
-    return min(max(x, minn), maxn)

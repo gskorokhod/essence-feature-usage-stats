@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 
-from utils.utils import map_range, clamp
+from utils.maths import map_range, clamp
 
 
 class Colour:
