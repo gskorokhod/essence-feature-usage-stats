@@ -32,7 +32,7 @@ jobs:
       - name: Extract conjure binary
         run: unzip conjure-v2.5.0-linux.zip -d $GITHUB_WORKSPACE &&
              echo $GITHUB_WORKSPACE &&
-             echo "$CONJURE_DIR" &&
+             echo $CONJURE_DIR &&
              ls $CONJURE_DIR
 
       - name: Get conjure version
