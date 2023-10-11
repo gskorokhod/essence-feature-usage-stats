@@ -30,7 +30,7 @@ jobs:
         run: wget https://github.com/conjure-cp/conjure/releases/download/v2.5.0/conjure-v2.5.0-linux.zip
 
       - name: Extract conjure binary
-        run: mkdir $CONJURE_DIR &&
+        run: mkdir -p $CONJURE_DIR &&
              unzip conjure-v2.5.0-linux.zip -d $CONJURE_DIR &&
              ls $CONJURE_DIR
 
