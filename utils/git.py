@@ -31,7 +31,8 @@ def sync_repo(directory_path, repo_url, branch='master', remote_name='origin') -
     :return: - None
     """
 
-    if len(os.listdir('/your/path')) == 0:  # If it's an empty directory, remove it (and clone repo)
+    if os.path.exists(directory_path) and len(os.listdir(directory_path)) == 0:
+        # If it's an empty directory, remove it (and clone repo)
         os.rmdir(directory_path)
 
     if not os.path.exists(directory_path):  # If the directory does not exist, clone the repository

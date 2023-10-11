@@ -2,7 +2,7 @@ import os
 
 
 def count_lines(fpath):
-    with open(fpath, "rbU") as f:
+    with open(fpath, "r") as f:
         return sum(1 for _ in f)
 
 

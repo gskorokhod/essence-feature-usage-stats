@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Tuple, Any
 
 from utils.maths import map_range, clamp
 
@@ -53,7 +54,7 @@ class Colour:
 
         return hex_string
 
-    def as_rgb(self) -> tuple[int]:
+    def as_rgb(self) -> tuple[int, int, int]:
         return self.r, self.g, self.b
 
     def as_hex(self) -> str:
@@ -70,7 +71,8 @@ GREEN = Colour(0, 255, 0)
 RED = Colour(255, 0, 0)
 BLUE = Colour(0, 0, 255)
 YELLOW = Colour(255, 255, 0)
-HOT_ORANGE = Colour(255, 90, 0)
+HOT_ORANGE = Colour(255, 100, 0)
+
 
 def get_linear_gradient_value(x, x_min, x_max, c_min: Colour, c_max: Colour):
     r = int(map_range(x, x_min, x_max, float(c_min.r), float(c_max.r)))

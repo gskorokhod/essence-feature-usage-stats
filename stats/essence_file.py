@@ -26,7 +26,7 @@ def find_essence_files(dir_path: str):
 
 class EssenceFile:
     """
-    Data class that describes one essence file and its contents
+    EssenceFile stores keyword counts and number of lines for a given file "fpath".
     """
 
     def __init__(self, fpath: str, conjure_bin_path, blocklist=None):
@@ -57,7 +57,7 @@ class EssenceFile:
     def get_fpath(self, depth=0) -> str:
         return trim_path(self.fpath, depth)
 
-    def get_uses(self, keyword: str) -> int:
+    def get_uses(self, keyword) -> int:
         return self.get_keyword_counts().get(keyword, 0)
 
     def get_keywords(self) -> set:
@@ -83,4 +83,8 @@ class EssenceFile:
     @staticmethod
     def get_essence_files_from_dir(dir_path, conjure_bin_path, blocklist=None):
         for fpath in find_essence_files(dir_path):
-            yield EssenceFile(fpath, conjure_bin_path, blocklist=blocklist)
+            try:
+                file = EssenceFile(fpath, conjure_bin_path, blocklist=blocklist)
+                yield file
+            except Exception as e:
+                print(f'Could not process file "{fpath}", throws exception: {e}')

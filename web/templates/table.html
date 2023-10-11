@@ -1,18 +1,24 @@
-<table>
+<table border="1">
+  {% set stats = data['essence_stats'] %}
+  {% set keywords = stats.get_essence_keywords(sort_mode='most-used') %}
+  {% set files = stats.get_essence_files(sort_mode='most-lines', reverse=False) %}
   <thead>
     <tr>
-      <th>Essence File</th>
-      {% for essence_keyword in data %}
-      <th>{{ row.city }}</th>
+      <th style="writing-mode: vertical-lr;">Essence File</th>
+      {% for essence_keyword in keywords %}
+        <th style="writing-mode: vertical-lr;">{{ essence_keyword.name }}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody>
-    {% for row in data %}
+    {% for file in files %}
     <tr>
-      <td>{{ row.name }}</td>
-      <td>{{ row.age }}</td>
-      <td>{{ row.city }}</td>
+      <td>{{ file.get_fpath(depth=2) }}</td>
+      {% for essence_keyword in keywords %}
+        {% set n_uses = file.get_uses(essence_keyword.name) %}
+        {% set colour = essence_keyword.get_colour(n_uses).as_hex() %}
+        <td bgcolor="{{ colour }}">{{ n_uses }}</td>
+      {% endfor %}
     </tr>
     {% endfor %}
   </tbody>

@@ -1,29 +1,40 @@
 from stats.essence_file import EssenceFile
+from web.table_generator.colour import Colour, RED, get_linear_gradient_value, HOT_ORANGE, YELLOW, GREEN
 
 
 class EssenceKeyword:
+    """
+    EssenceKeyword stores, for a particular keyword "name", the file uses of that keyword, and aggregate statistics.
+    """
+
     def __init__(self, name: str, files=None):
         if files is None:
             files = []
 
         self.name = name
+        self.total_usages = 0
+        self.min_usages = None
+        self.max_usages = None
 
         self.file_usages = {}
         for file in files:
-            if file not in self.file_usages and file.get_uses(self.name) > 0:
-                self.file_usages[file] = file.get_uses(self.name)
-
-        self.total_usages = sum(self.file_usages.values())
-        self.max_usages = max(self.file_usages.values())
-        self.min_usages = min(self.file_usages.values())
+            self.add_file(file)
 
     def add_file(self, file: EssenceFile):
         if file not in self.file_usages and file.get_uses(self.name) > 0:
             usages = file.get_uses(self.name)
             self.file_usages[file] = usages
             self.total_usages += usages
-            self.max_usages = max(self.max_usages, usages)
-            self.min_usages = min(self.min_usages, usages)
+
+            if self.max_usages is None:
+                self.max_usages = usages
+            else:
+                self.max_usages = max(self.max_usages, usages)
+
+            if self.min_usages is None:
+                self.min_usages = usages
+            else:
+                self.min_usages = min(self.min_usages, usages)
 
     def get_files(self):
         return set(self.file_usages.keys())
@@ -58,3 +69,21 @@ class EssenceKeyword:
             'avg_usages_per_file': self.get_avg_usages(),
             'total_usages': self.get_total_usages()
         }
+
+    def get_colour(self, n_uses: int) -> Colour:
+        avg = int(self.get_avg_usages())
+
+        if n_uses == 0:
+            return RED
+        elif n_uses < avg:
+            return get_linear_gradient_value(n_uses,
+                                             self.get_min_usages(),
+                                             avg,
+                                             HOT_ORANGE,
+                                             YELLOW)
+        else:
+            return get_linear_gradient_value(n_uses,
+                                             avg,
+                                             self.get_max_usages(),
+                                             YELLOW,
+                                             GREEN)
