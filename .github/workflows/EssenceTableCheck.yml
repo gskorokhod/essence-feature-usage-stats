@@ -9,6 +9,10 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    env:
+      ESSENCE_DIR: ~/EssenceCatalog
+      CONJURE_DIR: ~/conjure-v2.5.0-linux
  
     steps:
       - name: Checkout code
@@ -22,15 +26,23 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
+      - name: Download conjure binary as zip file from Releases
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: 'https://github.com/conjure-cp/conjure'
+          version: 'tags/v2.5.0'
+          file: 'conjure-v2.5.0-linux.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract conjure binary
+        run: unzip file.zip -d $CONJURE_DIR
+
+      - name: Get conjure version
+        run: $CONJURE_DIR/conjure --version
+
       - name: Install python dependencies
         run: pip install -r requirements.txt
 
-      - name: Make sure git is installed
-        run: git -v
-
-      - name: Set up git config
-        run: git config --global user.email "skorokhod.g@gmail.com" && git config --global user.name "gskorokhod"
-        
       - name: Run main.py
         run: python main.py
         working-directory: ./
