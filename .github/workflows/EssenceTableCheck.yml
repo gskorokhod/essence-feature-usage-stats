@@ -24,6 +24,9 @@ jobs:
 
       - name: Install python dependencies
         run: pip install -r requirements.txt
+
+      - name: Set up git config
+        run: git config --global user.email "skorokhod.g@gmail.com" && git config --global user.name "gskorokhod"
         
       - name: Run main.py
         run: python main.py
