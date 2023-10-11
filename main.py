@@ -10,8 +10,7 @@ ENV_PATH = os.path.abspath('./.env')
 load_dotenv(dotenv_path=ENV_PATH)
 
 KEYWORD_BLOCKLIST = [x.strip() for x in os.getenv('KEYWORD_BLOCKLIST').split(',')]
-#ESSENCE_DIR = os.getenv('ESSENCE_DIR')
-ESSENCE_DIR = './test/EssenceCatalog'
+ESSENCE_DIR = os.getenv('ESSENCE_DIR')
 CONJURE_DIR = os.getenv('CONJURE_DIR')
 ESSENCE_EXAMPLES_REPO = os.getenv('ESSENCE_EXAMPLES_REPO')
 CONJURE_BIN = os.path.join(CONJURE_DIR, 'conjure')
