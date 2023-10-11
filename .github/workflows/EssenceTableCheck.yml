@@ -23,7 +23,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       - name: Install python dependencies
-        run: pip install requirements.txt
+        run: pip install -r requirements.txt
         
       - name: Run main.py
         run: python main.py
