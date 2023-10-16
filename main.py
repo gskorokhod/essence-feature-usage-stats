@@ -28,3 +28,5 @@ if __name__ == "__main__":
     path = Path("table.html")
     with path.open("w") as f:
         f.write(table_html)
+
+    # test
