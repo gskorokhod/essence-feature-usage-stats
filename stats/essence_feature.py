@@ -14,6 +14,11 @@ class EssenceKeyword:
     EssenceKeyword stores, for a particular keyword "name", the file uses of that keyword, and aggregate statistics.
     """
 
+    # ToDo use python getters / setters instead of java style,
+    #  search: "python function as attribute" or ask Nik
+
+    # ToDo some attrs should be private?
+
     def __init__(self, name: str, files=None):
         if files is None:
             files = []

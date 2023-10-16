@@ -18,6 +18,11 @@ class EssenceStats:
     Class that stores stats for a given directory with
     """
 
+    # ToDo use python getters / setters instead of java style,
+    #  search: "python function as attribute" or ask Nik
+
+    # ToDo some attrs should be private?
+
     def __init__(  # noqa: PLR0913
         self,
         essence_dir: str,

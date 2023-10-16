@@ -55,6 +55,11 @@ class EssenceFile:
     EssenceFile stores keyword counts and number of lines for a given file "fpath".
     """
 
+    # ToDo use python getters / setters instead of java style,
+    #  search: "python function as attribute" or ask Nik
+
+    # ToDo some attrs should be private?
+
     def __init__(self, fpath: str | Path, conjure_bin_path, blocklist=None):
         fpath = Path(fpath).resolve()
 

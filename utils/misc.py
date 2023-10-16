@@ -1,4 +1,9 @@
-def flat_keys_count(data, blocklist=None) -> dict:
+from typing import Any
+
+
+def flat_keys_count(
+    data: dict[Any, dict | list] | list, blocklist=None
+) -> dict[Any, int]:
     """
     Recurse over a dict or list (potentially with nested dicts / lists) and count all dictionary keys
     :param data: a dictionary or list containing dictionaries / lists
@@ -24,7 +29,8 @@ def flat_keys_count(data, blocklist=None) -> dict:
                 add_key(key, new_keys[key])
 
     if isinstance(
-        data, dict,
+        data,
+        dict,
     ):  # If it's a dict, add its keys and recurse over the values
         for key in data:
             add_key(key)

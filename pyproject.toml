@@ -5,7 +5,7 @@ select = ["E", "F", "B", "I", "N", "UP",
     "ICN", "G", "INP", "PIE", "Q", "RSE",
     "RET", "SIM", "ARG",
     "FIX", "PL", "TRY", "FLY", "PERF",
-    "FURB", "RUF", "ERA", "PTH", "SLF"]
+    "RUF", "ERA", "PTH", "SLF"]
 
 # 2. Avoid enforcing line-length violations (`E501`)
 ignore = ["E501"]

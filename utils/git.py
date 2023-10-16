@@ -8,6 +8,8 @@ from tqdm import tqdm
 
 
 class InvalidGitRemoteUrlError(ValueError):
+    """This exception is raised when a git remote url is invalid."""
+
     def __init__(self, repo_url):
         super().__init__(f"Not a valid git repository url: {repo_url}")
 
@@ -24,7 +26,10 @@ class CloneProgress(RemoteProgress):
 
 
 def sync_repo(
-    directory_path: str | Path, repo_url, branch="master", remote_name="origin",
+    directory_path: str | Path,
+    repo_url,
+    branch="master",
+    remote_name="origin",
 ) -> Repo:
     """
     Given a directory and a remote repo, synchronise directory with the repo.

@@ -20,7 +20,7 @@ def get_essence_file_ast(fpath, conjure_bin_path) -> dict:
     return json.loads(result.stdout)
 
 
-def get_version(conjure_bin_path) -> tuple:
+def get_version(conjure_bin_path) -> tuple[str, str]:
     """
     Get version from conjure. Not useful now but maybe use this to auto-update conjure from git repo in the future?
     :param conjure_bin_path: path to conjure binary
