@@ -6,19 +6,18 @@ def get_essence_file_ast(fpath, conjure_bin_path) -> dict:
     """
     Run the `conjure pretty` command line tool and get the parsed AST as a dict
     ToDo: Instead of relying on a conjure binary being provided, download one automatically if needed
-    :param conjure_path: path to conjure binary
+    :param conjure_bin_path: path to conjure binary
     :param fpath: path to an essence file
     :return: the Abstract Syntax Tree in json format (as a dict)
     """
 
-    result = subprocess.run([conjure_bin_path,
-                             "pretty",
-                             "--output-format=astjson",
-                             fpath],
-                            capture_output=True,
-                            text=True)
-    ast_json = json.loads(result.stdout)
-    return ast_json
+    result = subprocess.run(
+        [conjure_bin_path, "pretty", "--output-format=astjson", fpath],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(result.stdout)
 
 
 def get_version(conjure_bin_path) -> tuple:
@@ -27,17 +26,16 @@ def get_version(conjure_bin_path) -> tuple:
     :param conjure_bin_path: path to conjure binary
     :return: tuple of (version, commit) - conjure version and git repo version (as given by conjure --version)
     """
-    result = subprocess.run([conjure_bin_path,
-                             "--version"],
-                            capture_output=True,
-                            text=True)
+    result = subprocess.run(
+        [conjure_bin_path, "--version"], capture_output=True, text=True, check=True,
+    )
 
     version, commit = None, None
-    lines = result.stdout.split('\n')
+    lines = result.stdout.split("\n")
     for line in lines:
-        if 'Release version' in line:
-            version = line.lstrip('Release version ')
-        if 'Repository version' in line:
-            commit, *ts_parts = line.lstrip('Repository version ').split()
+        if "Release version" in line:
+            version = line.removeprefix("Release version ")
+        if "Repository version" in line:
+            commit, *ts_parts = line.removeprefix("Repository version ").split()
 
     return version, commit

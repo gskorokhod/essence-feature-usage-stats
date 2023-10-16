@@ -10,19 +10,23 @@ def flat_keys_count(data, blocklist=None) -> dict:
 
     def add_key(key, count=1):
         if (blocklist is None) or (key not in blocklist):
-            if key in ans.keys():
+            if key in ans:
                 ans[key] += count
             else:
                 ans[key] = count
 
-    def recurse_and_add_keys(item):  # Recurse over entry (list or dict) and add its keys to the count
+    def recurse_and_add_keys(
+        item,
+    ):  # Recurse over entry (list or dict) and add its keys to the count
         if isinstance(item, (list, dict)):
             new_keys = flat_keys_count(item)
-            for key in new_keys.keys():
+            for key in new_keys:
                 add_key(key, new_keys[key])
 
-    if isinstance(data, dict):  # If it's a dict, add its keys and recurse over the values
-        for key in data.keys():
+    if isinstance(
+        data, dict,
+    ):  # If it's a dict, add its keys and recurse over the values
+        for key in data:
             add_key(key)
             recurse_and_add_keys(data[key])
     elif isinstance(data, list):  # If it's a list, recurse over all its elements

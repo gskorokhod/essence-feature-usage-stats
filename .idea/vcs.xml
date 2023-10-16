@@ -3,6 +3,5 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/https:/github.com/conjure-cp/EssenceCatalog" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/test/EssenceCatalog" vcs="Git" />
   </component>
 </project>

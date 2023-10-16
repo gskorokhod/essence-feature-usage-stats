@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 
 
 def count_lines(fpath):
-    with open(fpath, "r") as f:
+    fpath = Path(fpath)
+    with fpath.open("r") as f:
         return sum(1 for _ in f)
 
 
@@ -17,6 +19,4 @@ def trim_path(input_path, num_elements=0):
     num_elements = min(num_elements, len(path_elements))
 
     # Join the last num_elements elements to form the trimmed path
-    trimmed_path = os.path.sep.join(path_elements[-num_elements:])
-
-    return trimmed_path
+    return os.path.sep.join(path_elements[-num_elements:])

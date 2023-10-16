@@ -1,26 +1,52 @@
 import os
+from pathlib import Path
 
 from utils.conjure import get_essence_file_ast
 from utils.files import count_lines, trim_path
 from utils.misc import flat_keys_count
 
 
-def find_essence_files(dir_path: str):
+class EssenceFileError(ValueError):
+    pass
+
+
+class EssenceFileInvalidPathError(EssenceFileError):
+    def __init__(self, fpath):
+        super().__init__(f"Not a valid Essence file: {fpath}")
+
+
+class EssenceFileNotParsableError(EssenceFileError):
+    def __init__(self, fpath, msg=None):
+        message = f"Essence file could not be parsed: {fpath}"
+        if msg:
+            message += f", reason: {msg}"
+
+        super().__init__(message)
+
+
+class EssenceInvalidDirectoryError(ValueError):
+    def __init__(self, dir_path):
+        super().__init__(f"The provided path '{dir_path}' is not a valid directory")
+
+
+def find_essence_files(dir_path: str | Path):
     """
     Find all essence files in a given directory and return a list of full paths to them
     :param dir_path: path to directory
     :return: a generator of paths to essence files
     """
 
+    dir_path = Path(dir_path)
+
     # Ensure the directory path is valid
-    if not os.path.isdir(dir_path):
-        raise ValueError(f"The provided path '{dir_path}' is not a valid directory")
+    if not dir_path.is_dir():
+        raise EssenceInvalidDirectoryError
 
     # Walk through the directory and its subdirectories
     for root, _, files in os.walk(dir_path):
         for file in files:
-            fpath = os.path.join(root, file)
-            if os.path.isfile(fpath) and fpath.endswith('.essence'):
+            fpath = Path(root) / file
+            if fpath.is_file() and fpath.suffix == ".essence":
                 yield fpath
 
 
@@ -29,21 +55,21 @@ class EssenceFile:
     EssenceFile stores keyword counts and number of lines for a given file "fpath".
     """
 
-    def __init__(self, fpath: str, conjure_bin_path, blocklist=None):
-        if not os.path.exists(fpath):
-            raise ValueError(f'File does not exist: {fpath}')
-        if not os.path.isfile(fpath):
-            raise ValueError(f'Not a file: {fpath}')
-        if not fpath.endswith('.essence'):
-            raise ValueError(f'Not an file: {fpath}')
+    def __init__(self, fpath: str | Path, conjure_bin_path, blocklist=None):
+        fpath = Path(fpath).resolve()
 
+        if not (fpath.is_file() and fpath.suffix == ".essence"):
+            raise EssenceFileInvalidPathError(fpath)
         try:
-            self.fpath = os.path.abspath(fpath)
-            self.ast = get_essence_file_ast(self.fpath, conjure_bin_path=conjure_bin_path)
+            self.fpath = Path.resolve(fpath)
+            self.ast = get_essence_file_ast(
+                self.fpath,
+                conjure_bin_path=conjure_bin_path,
+            )
             self.keyword_counts = flat_keys_count(self.ast, blocklist)
             self.n_lines = count_lines(fpath)
         except Exception as e:
-            raise ValueError(f'Invalid Essence file {fpath}. Trying to parse results in exception: {e}')
+            raise EssenceFileNotParsableError(fpath, str(e)) from e
 
     def get_keyword_counts(self) -> dict:
         return self.keyword_counts
@@ -66,18 +92,18 @@ class EssenceFile:
     def __hash__(self):
         return hash(self.fpath)
 
-    def __eq___(self, other):
+    def __eq__(self, other):
         return self.fpath == other.fpath
 
     def __str__(self):
-        return f'EssenceFile({self.fpath}): {self.n_lines} lines'
+        return f"EssenceFile({self.fpath}): {self.n_lines} lines"
 
     def as_json(self, path_depth=0) -> dict:
         return {
-            'path': self.get_fpath(path_depth),
-            'ast': self.get_ast(),
-            'keyword_counts': self.get_keyword_counts(),
-            'n_lines': self.get_n_lines()
+            "path": self.get_fpath(path_depth),
+            "ast": self.get_ast(),
+            "keyword_counts": self.get_keyword_counts(),
+            "n_lines": self.get_n_lines(),
         }
 
     @staticmethod
@@ -86,5 +112,5 @@ class EssenceFile:
             try:
                 file = EssenceFile(fpath, conjure_bin_path, blocklist=blocklist)
                 yield file
-            except Exception as e:
+            except Exception as e:  # noqa: PERF203
                 print(f'Could not process file "{fpath}", throws exception: {e}')
