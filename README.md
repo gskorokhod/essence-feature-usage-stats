@@ -28,12 +28,12 @@ For now, though:
 - [x] Get basic stats in JSON format
 - [x] Get basic stats as HTML table
 - [ ] Table sorting
-- [ ] Code refactoring
+- [x] Code refactoring
 - [ ] Documentation
 - [ ] Show/Hide table rows/columns
 - [ ] Web server for hosting the HTML page
-- [ ] GitHub Actions integration
-- [ ] Extra stats, e.g. file line count
+- 🏗️ GitHub Actions integration
+- [x] Extra stats, e.g. file line count
 - [ ] Sorting using these stats
 
 
