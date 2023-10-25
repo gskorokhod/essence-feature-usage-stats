@@ -1,12 +1,5 @@
 from stats.essence_file import EssenceFile
-from web.colour import (
-    GREEN,
-    HOT_ORANGE,
-    RED,
-    YELLOW,
-    Colour,
-    get_linear_gradient_value,
-)
+from utils.colour import *  # noqa: F403
 
 
 class EssenceKeyword:
@@ -48,28 +41,22 @@ class EssenceKeyword:
             else:
                 self.min_usages = min(self.min_usages, usages)
 
-    def get_files(self):
+    @property
+    def files(self):
         return set(self.file_usages.keys())
 
-    def get_file_paths(self, depth=0) -> list:
-        return [x.get_fpath(depth) for x in self.get_files()]
+    @property
+    def num_files_using_feature(self) -> int:
+        return len(self.files)
 
-    def get_num_files_using_feature(self) -> int:
-        return len(self.get_files())
-
-    def get_total_usages(self) -> int:
-        return self.total_usages
-
-    def get_avg_usages(self) -> float:
-        return float(self.get_total_usages()) / float(
-            self.get_num_files_using_feature(),
+    @property
+    def avg_usages(self) -> float:
+        return float(self.total_usages) / float(
+            self.num_files_using_feature,
         )
 
-    def get_min_usages(self) -> int:
-        return self.min_usages
-
-    def get_max_usages(self) -> int:
-        return self.max_usages
+    def get_file_paths(self, depth=0) -> list:
+        return [x.get_str_path(depth) for x in self.files]
 
     def get_usages_in_file(self, file) -> int:
         return file.get_uses(self.name)
@@ -78,30 +65,30 @@ class EssenceKeyword:
         return {
             "name": self.name,
             "used_in_files": self.get_file_paths(path_depth),
-            "max_usages_in_file": self.get_max_usages(),
-            "min_usages_in_file": self.get_min_usages(),
-            "avg_usages_per_file": self.get_avg_usages(),
-            "total_usages": self.get_total_usages(),
+            "max_usages_in_file": self.max_usages,
+            "min_usages_in_file": self.min_usages,
+            "avg_usages_per_file": self.avg_usages,
+            "total_usages": self.total_usages,
         }
 
-    def get_colour(self, n_uses: int) -> Colour:
-        avg = int(self.get_avg_usages())
+    def get_colour(self, n_uses: int) -> Colour:  # noqa: F405
+        avg = int(self.avg_usages)
 
         if n_uses == 0:
-            return RED
-        elif n_uses < avg:  # noqa: RET505
-            return get_linear_gradient_value(
+            return RED  # noqa: F405
+        if n_uses < avg:
+            return get_linear_gradient_value(  # noqa: F405
                 n_uses,
-                self.get_min_usages(),
+                self.min_usages,
                 avg,
-                HOT_ORANGE,
-                YELLOW,
+                HOT_ORANGE,  # noqa: F405
+                YELLOW,  # noqa: F405
             )
-        else:
-            return get_linear_gradient_value(
-                n_uses,
-                avg,
-                self.get_max_usages(),
-                YELLOW,
-                GREEN,
-            )
+
+        return get_linear_gradient_value(  # noqa: F405
+            n_uses,
+            avg,
+            self.max_usages,
+            YELLOW,  # noqa: F405
+            GREEN,  # noqa: F405
+        )

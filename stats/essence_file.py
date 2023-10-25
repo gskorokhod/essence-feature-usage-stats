@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Generator
 
 from utils.conjure import get_essence_file_ast
 from utils.files import count_lines, trim_path
@@ -55,64 +56,93 @@ class EssenceFile:
     EssenceFile stores keyword counts and number of lines for a given file "fpath".
     """
 
-    # ToDo use python getters / setters instead of java style,
-    #  search: "python function as attribute" or ask Nik
-
-    # ToDo some attrs should be private?
-
     def __init__(self, fpath: str | Path, conjure_bin_path, blocklist=None):
+        """
+        Constructs a EssenceFile object from a given file path
+        """
+
         fpath = Path(fpath).resolve()
 
         if not (fpath.is_file() and fpath.suffix == ".essence"):
             raise EssenceFileInvalidPathError(fpath)
         try:
-            self.fpath = Path.resolve(fpath)
-            self.ast = get_essence_file_ast(
-                self.fpath,
+            self._fpath = Path.resolve(fpath)
+            self._ast = get_essence_file_ast(
+                self._fpath,
                 conjure_bin_path=conjure_bin_path,
             )
-            self.keyword_counts = flat_keys_count(self.ast, blocklist)
-            self.n_lines = count_lines(fpath)
+            self._keyword_counts = flat_keys_count(self._ast, blocklist)
+            self._n_lines = count_lines(fpath)
         except Exception as e:
             raise EssenceFileNotParsableError(fpath, str(e)) from e
 
-    def get_keyword_counts(self) -> dict:
-        return self.keyword_counts
+    @property
+    def path(self) -> Path:
+        return self._fpath
 
-    def get_n_lines(self) -> int:
-        return self.n_lines
+    @property
+    def ast(self) -> dict:
+        return self._ast
 
-    def get_ast(self) -> dict:
-        return self.ast
+    @property
+    def keyword_counts(self) -> dict[str, int]:
+        return self._keyword_counts
 
-    def get_fpath(self, depth=0) -> str:
-        return trim_path(self.fpath, depth)
+    @property
+    def keywords(self) -> set:
+        return set(self._keyword_counts.keys())
 
-    def get_uses(self, keyword) -> int:
-        return self.get_keyword_counts().get(keyword, 0)
+    @property
+    def n_lines(self) -> int:
+        return self._n_lines
 
-    def get_keywords(self) -> set:
-        return set(self.get_keyword_counts().keys())
+    def get_str_path(self, depth=0) -> str:
+        """
+        Get a formatted path to this essence file (and optionally trim it)
+        :param depth: (optional) trim path, leaving a suffix of this size
+        :return: formatted path to file
+        """
+        return trim_path(self._fpath, depth)
+
+    def get_uses(self, keyword: str) -> int:
+        """
+        Get the number of times a given keyword is used in the file
+        :param keyword: (str) the Essence keyword to count
+        :return: how many times this keyword is used in the file
+        """
+        return self._keyword_counts.get(keyword, 0)
 
     def __hash__(self):
-        return hash(self.fpath)
+        return hash(self._fpath)
 
     def __eq__(self, other):
-        return self.fpath == other.fpath
+        return self._fpath == other._fpath
 
     def __str__(self):
-        return f"EssenceFile({self.fpath}): {self.n_lines} lines"
+        return f"EssenceFile({self._fpath}): {self.n_lines} lines"
 
     def as_json(self, path_depth=0) -> dict:
+        """
+        Get file stats in json format
+        :param path_depth: (optional) trim path, leaving a suffix of this size
+        :return: (dict) file stats, including its path, number of lines, keywords and AST
+        """
         return {
-            "path": self.get_fpath(path_depth),
-            "ast": self.get_ast(),
-            "keyword_counts": self.get_keyword_counts(),
-            "n_lines": self.get_n_lines(),
+            "path": self.get_str_path(path_depth),
+            "ast": self._ast,
+            "keyword_counts": self._keyword_counts,
+            "n_lines": self.n_lines,
         }
 
     @staticmethod
-    def get_essence_files_from_dir(dir_path, conjure_bin_path, blocklist=None):
+    def get_essence_files_from_dir(
+        dir_path: str | Path, conjure_bin_path: str | Path, blocklist=None
+    ):
+        """
+        :param dir_path: path to directory with essence files
+        :param conjure_bin_path: a path to conjure binary
+        :param blocklist: a list of Essence keywords to ignore
+        """
         for fpath in find_essence_files(dir_path):
             try:
                 file = EssenceFile(fpath, conjure_bin_path, blocklist=blocklist)

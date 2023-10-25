@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %} Essence feature stats {% endblock %}
+
+{% block nav %}
+    <li><a href="/">Index</a> </li>
+{% endblock %}
+
+{% block content %}
+    {% include "keyword_list.html" %}
+
+    <section>
+        <h2>Essence feature table</h2>
+        {% if 'table' in data.keys() %}
+            {{ data['table'] }}
+        {% else %}
+            {# Include the table.html template here #}
+            {% include "table.html" %}
+        {% endif %}
+    </section>
+{% endblock %}

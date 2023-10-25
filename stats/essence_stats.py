@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from stats.essence_feature import EssenceKeyword
+from stats.essence_keyword import EssenceKeyword
 from stats.essence_file import EssenceFile
 from utils.git import InvalidGitRemoteUrlError, sync_repo
 
@@ -60,9 +60,9 @@ class EssenceStats:
             self.conjure_bin,
             blocklist=self.blocklist,
         ):
-            self.essence_files[file.get_fpath()] = file
+            self.essence_files[file.get_str_path()] = file
 
-            for keyword in file.get_keywords():
+            for keyword in file.keywords:
                 if keyword not in self.essence_keywords:
                     self.essence_keywords[keyword] = EssenceKeyword(keyword)
                 self.essence_keywords[keyword].add_file(file)
@@ -108,7 +108,7 @@ class EssenceStats:
 
         match sort_mode:
             case "most-lines":
-                ans.sort(key=lambda x: x.get_n_lines(), reverse=reverse)
+                ans.sort(key=lambda x: x.n_lines, reverse=reverse)
             case _:
                 pass
 
@@ -123,9 +123,9 @@ class EssenceStats:
 
         match sort_mode:
             case "most-used":
-                ans.sort(key=lambda x: x.get_total_usages(), reverse=reverse)
+                ans.sort(key=lambda x: x.total_usages, reverse=reverse)
             case "avg-uses":
-                ans.sort(key=lambda x: x.get_avg_usages(), reverse=reverse)
+                ans.sort(key=lambda x: x.avg_usages, reverse=reverse)
             case _:
                 pass
 
